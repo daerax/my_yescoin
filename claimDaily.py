@@ -70,8 +70,8 @@ def fetch(method, url, token=None, data=None, sign=None, tm=None) -> json:
         'accept-language': 'en-ID,en-US;q=0.9,en;q=0.8,id;q=0.7',
         'content-length': '0',
         'priority': 'u=1, i',
-        'Origin': 'https://www.yescoin.gold',
-        'referer': 'https://www.yescoin.gold/',
+        'Origin': 'https://www.yescoin.fun',
+        'referer': 'https://www.yescoin.fun/',
         'sec-ch-ua': '"Google Chrome";v="125", "Chromium";v="125", "Not.A/Brand";v="24"',
         'sec-ch-ua-mobile': '?0',
         'sec-ch-ua-platform': '"Android"',
@@ -210,9 +210,6 @@ def getDailyMission(token):
 def checkDailyMission_And_Claim(token, data):
     for index, datanya in enumerate(data):
         if datanya['missionStatus'] == 0:
-            checkDailyMissionRes = fetch('POST', 'https://api-backend.yescoin.fun/mission/checkDailyMission', token=token, data=datanya['missionId']).json()
-            print(f"{index}. {datanya['name']} | Status {datanya['missionStatus']} {checkDailyMissionRes['message']}", end='\r', flush=True)
-            time.sleep(3)
             if datanya['name'] == 'Daily Check-in':
                 pass
                 # signListRes = fetch('GET', 'https://api-backend.yescoin.fun/signIn/list', token=token).json()
@@ -238,6 +235,10 @@ def checkDailyMission_And_Claim(token, data):
                 claimRewardres = fetch('POST', 'https://api-backend.yescoin.fun/mission/claimReward', token=token, data=datanya['missionId']).json()
                 print(f"{index}. {datanya['name']} | Status {datanya['missionStatus']} {claimRewardres['message']} | {claimRewardres['data'].get('reward', '') if claimRewardres['data'] != None else ''}")
             else:
+                for _ in range(2):
+                    checkDailyMissionRes = fetch('POST', 'https://api-backend.yescoin.fun/mission/checkDailyMission', token=token, data=datanya['missionId']).json()
+                    time.sleep(2)
+                print(f"{index}. {datanya['name']} | Status {datanya['missionStatus']} {checkDailyMissionRes['message']}", end='\r', flush=True)
                 claimRewardres = fetch('POST', 'https://api-backend.yescoin.fun/mission/claimReward', token=token, data=datanya['missionId']).json()
                 print(f"{index}. {datanya['name']} | Status {datanya['missionStatus']} {claimRewardres['message']} | {claimRewardres['data'].get('reward', '') if claimRewardres['data'] != None else ''}")
         else:
